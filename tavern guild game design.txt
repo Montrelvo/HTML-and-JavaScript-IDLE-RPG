@@ -1,0 +1,34 @@
+GAME DESIGN SPEC — TEXT BASED TAVERN + GUILD MANAGEMENT
+
+OVERVIEW
+The game is a browser-based text game using HTML and JavaScript. The player runs a tavern that manages a guild of adventurers. Adventurers are recruited, leveled, equipped, and sent on quests.
+
+CORE GAME LOOP
+1. Display tavern status (resources, gold, reputation).
+2. Allow recruitment of adventurers.
+3. Assign adventurers to quests.
+4. Resolve quests using text-based combat simulation.
+5. Grant XP, gold, loot.
+6. Repeat with scaling difficulty.
+
+IDLE MECHANICS
+- Auto-resolving quests over time
+- Offline progress using timestamps
+- Upgrades that increase efficiency
+
+RPG MECHANICS
+- Classes (Fighter, Mage, Rogue, Healer)
+- Levels and stat growth
+- Randomized loot and traits
+
+DUNGEON CRAWLER MECHANICS
+- Random encounters
+- Risk vs reward choices
+- Loot rarity tiers
+
+TECHNICAL RULES
+-Text-only UI using DOM
+-Save data with localStorage
+-Game logic entirely in JavaScript
+
+END
