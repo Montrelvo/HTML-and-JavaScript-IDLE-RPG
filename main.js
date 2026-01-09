@@ -3,44 +3,28 @@ let player = {
   reputation: 1
 };
 
-interface Adventurer {
-  name: string;
-  class: string;
-  level: number;
-  hp: number;
-  atk: number;
-  xp: number;
-}
+let guild = [];
 
-let guild: Adventurer[] = [];
-
-function log(text: string) {
+function log(text) {
   const logDiv = document.getElementById("log");
-  if (logDiv) {
-    logDiv.innerHTML += `<div>> ${text}</div>`;
-    logDiv.scrollTop = logDiv.scrollHeight;
-  }
+  logDiv.innerHTML += `<div>> ${text}</div>`;
+  logDiv.scrollTop = logDiv.scrollHeight;
 }
 
 function updateUI() {
-  const statsDiv = document.getElementById("stats");
-  if (statsDiv) {
-    statsDiv.innerHTML =
-      `Gold: ${player.gold} | Reputation: ${player.reputation}`;
-  }
+  document.getElementById("stats").innerHTML =
+    `Gold: ${player.gold} | Reputation: ${player.reputation}`;
 
   const guildDiv = document.getElementById("guild");
-  if (guildDiv) {
-    guildDiv.innerHTML = "";
+  guildDiv.innerHTML = "";
 
-    guild.forEach((a, i) => {
-      guildDiv.innerHTML += `
-        <div>
-          ${a.name} (Lv ${a.level} ${a.class}) — HP:${a.hp} ATK:${a.atk} XP:${a.xp}
-        </div>
-      `;
-    });
-  }
+  guild.forEach((a, i) => {
+    guildDiv.innerHTML += `
+      <div>
+        ${a.name} (Lv ${a.level} ${a.class}) — HP:${a.hp} ATK:${a.atk} XP:${a.xp}
+      </div>
+    `;
+  });
 }
 
 function recruitAdventurer() {

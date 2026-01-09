@@ -1,0 +1,17 @@
+ERRORS FOUND:
+
+1) index.html references "main.js" but only "main.ts" file exists. 
+   - Potential fix: rename "main.ts" -> "main.js" or set up TS build.
+
+2) style.css references #adventurers but no element with that id in index.html. Possibly rename to #guild.
+
+RECOMMENDED FIXES:
+
+• Rename main.ts to main.js for direct script usage.
+• Change #adventurers in style.css to #guild.
+
+IMPLEMENTED FIXES:
+(We've completed the recommended steps.)
+CHANGE LOG:
+1) Renamed main.ts -> main.js
+2) Changed #adventurers to #guild in style.css
