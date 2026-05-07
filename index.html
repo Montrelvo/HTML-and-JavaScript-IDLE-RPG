@@ -2,14 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Fixed index</title>
+    <title>Tavern Guild Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      console.log("Hello, your page loads correctly and the viewport is set.");
-    </script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Page Title</h1>
-    <p>This code now includes a valid doctype, required head elements, and a 'meta viewport' tag.</p>
+    <h1>Your Tavern</h1>
+    <div id="stats" class="panel"></div>
+    <div class="panel">
+        <button onclick="recruitAdventurer()">Recruit Adventurer (10 gold)</button>
+        <button onclick="sendOnQuest()">Send on Quest</button>
+    </div>
+    <div id="guild" class="panel"></div>
+    <div id="log" class="panel"></div>
+    <script src="main.js"></script>
 </body>
 </html>
