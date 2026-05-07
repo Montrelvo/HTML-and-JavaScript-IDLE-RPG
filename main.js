@@ -88,3 +88,57 @@ function sendOnQuest() {
 
 updateUI();
 log("Welcome to your tavern.");
+
+// Check localStorage availability and add save/load with logs
+function saveGame() {
+   if (typeof localStorage === 'undefined') {
+       log("LocalStorage is not available, can't save game data.");
+       return;
+   }
+   try {
+       let data = {
+           player,
+           guild
+       };
+       localStorage.setItem("myGameSave", JSON.stringify(data));
+       log("Game data saved to localStorage.");
+   } catch (err) {
+       log("Error saving game data: " + err.message);
+   }
+}
+
+function loadGame() {
+   if (typeof localStorage === 'undefined') {
+       log("LocalStorage is not available, can't load game data.");
+       return;
+   }
+   try {
+       let dataStr = localStorage.getItem("myGameSave");
+       if (!dataStr) {
+           log("No saved game data found in localStorage.");
+           return;
+       }
+       let data = JSON.parse(dataStr);
+       if (!data.player || !data.guild) {
+           log("Saved game data is missing expected structures.");
+           return;
+       }
+       // Assign loaded data
+       player = data.player;
+       guild = data.guild;
+       log("Game data loaded successfully from localStorage.");
+   } catch (err) {
+       log("Error loading game data from localStorage: " + err.message);
+   }
+   updateUI();
+}
+
+// Load game on startup
+loadGame();
+
+// Optional: auto-save every 10 seconds
+function autoSaveInterval() {
+   saveGame();
+   setTimeout(autoSaveInterval, 10000);
+}
+setTimeout(autoSaveInterval, 10000);
