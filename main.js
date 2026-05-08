@@ -86,6 +86,27 @@ function sendOnQuest() {
   updateUI();
 }
 
+function checkRecruitStatus() {
+  if (guild.length === 0) {
+    log("You have no adventurers in your guild.");
+    return;
+  }
+
+  log("--- Recruit Status Report ---");
+  guild.forEach((a, i) => {
+    log(`${i + 1}. ${a.name} (${a.class}) | Level: ${a.level} | HP: ${a.hp} | ATK: ${a.atk} | XP: ${a.xp}/10`);
+  });
+  log("--- End Report ---");
+}
+
+function checkInventory() {
+  log("--- Tavern Inventory ---");
+  log(`Gold: ${player.gold}`);
+  log(`Reputation: ${player.reputation}`);
+  log(`Adventurers: ${guild.length}`);
+  log("--- End Inventory ---");
+}
+
 updateUI();
 log("Welcome to your tavern.");
 
