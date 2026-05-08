@@ -85,14 +85,17 @@ function sendOnQuest() {
   log("The party ventures into the dungeon...");
 
   let success = Math.random() < 0.75;
-  let reward = Math.floor(Math.random() * 10) + 5;
+  let reward = {
+    gold: Math.floor(Math.random() * 10) + 5,
+    resources: getRandomResources()
+  };
 
   if (success) {
-    player.gold += reward;
+    player.gold += reward.gold;
     player.reputation += 1;
 
     // Get and award random resources
-    const resources = getRandomResources();
+    const resources = reward.resources;
     Object.keys(resources).forEach(res => {
       player[res] += resources[res];
       log(`Obtained ${resources[res]} ${res}.`);
@@ -109,7 +112,7 @@ function sendOnQuest() {
       }
     });
 
-    log(`Quest successful! Earned ${reward} gold.`);
+    log(`Quest successful! Earned ${reward.gold} gold.`);
   } else {
     log("The quest failed. The party retreats.");
   }
