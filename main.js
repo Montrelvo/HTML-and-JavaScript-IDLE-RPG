@@ -1,6 +1,10 @@
 let player = {
   gold: 50,
-  reputation: 1
+  reputation: 1,
+  wood: 0,
+  stone: 0,
+  iron: 0,
+  cotton: 0
 };
 
 let guild = [];
@@ -52,6 +56,26 @@ function recruitAdventurer() {
   updateUI();
 }
 
+function getRandomResources() {
+  const resourceTypes = ['wood', 'stone', 'iron', 'cotton'];
+  const numResources = Math.random() < 0.5 ? 2 : 3; // 50% chance of 2 or 3 resources
+  const selected = [];
+  const temp = [...resourceTypes];
+  
+  for (let i = 0; i < numResources; i++) {
+    const idx = Math.floor(Math.random() * temp.length);
+    selected.push(temp[idx]);
+    temp.splice(idx, 1);
+  }
+  
+  const resources = {};
+  selected.forEach(res => {
+    resources[res] = Math.floor(Math.random() * 5) + 1; // 1-5 of each resource
+  });
+  
+  return resources;
+}
+
 function sendOnQuest() {
   if (guild.length === 0) {
     log("You have no adventurers.");
@@ -66,6 +90,13 @@ function sendOnQuest() {
   if (success) {
     player.gold += reward;
     player.reputation += 1;
+
+    // Get and award random resources
+    const resources = getRandomResources();
+    Object.keys(resources).forEach(res => {
+      player[res] += resources[res];
+      log(`Obtained ${resources[res]} ${res}.`);
+    });
 
     guild.forEach(a => {
       a.xp += 5;
@@ -104,6 +135,10 @@ function checkInventory() {
   log(`Gold: ${player.gold}`);
   log(`Reputation: ${player.reputation}`);
   log(`Adventurers: ${guild.length}`);
+  log(`Wood: ${player.wood}`);
+  log(`Stone: ${player.stone}`);
+  log(`Iron: ${player.iron}`);
+  log(`Cotton: ${player.cotton}`);
   log("--- End Inventory ---");
 }
 
