@@ -182,6 +182,13 @@ function loadGame() {
        // Assign loaded data
        player = data.player;
        guild = data.guild;
+       
+       // Ensure backward compatibility for new resources
+       player.wood = player.wood || 0;
+       player.stone = player.stone || 0;
+       player.iron = player.iron || 0;
+       player.cotton = player.cotton || 0;
+       
        log("Game data loaded successfully from localStorage.");
    } catch (err) {
        log("Error loading game data from localStorage: " + err.message);
