@@ -7,7 +7,8 @@ let player = {
   cotton: 0
 };
 
-let guild = [];
+let activeGuild = [];
+let injuredGuild = [];
 
 function log(text) {
   const logDiv = document.getElementById("log");
@@ -20,9 +21,19 @@ function updateUI() {
     `Gold: ${player.gold} | Reputation: ${player.reputation}`;
 
   const guildDiv = document.getElementById("guild");
-  guildDiv.innerHTML = "";
+  guildDiv.innerHTML = "<h3>Active Adventurers</h3>";
 
-  guild.forEach((a, i) => {
+  activeGuild.forEach((a, i) => {
+    guildDiv.innerHTML += `
+      <div>
+        ${a.name} (Lv ${a.level} ${a.class}) — HP:${a.hp} ATK:${a.atk} XP:${a.xp}
+      </div>
+    `;
+  });
+
+  guildDiv.innerHTML += "<h3>Injured Adventurers</h3>";
+
+  injuredGuild.forEach((a, i) => {
     guildDiv.innerHTML += `
       <div>
         ${a.name} (Lv ${a.level} ${a.class}) — HP:${a.hp} ATK:${a.atk} XP:${a.xp}
@@ -43,7 +54,7 @@ function recruitAdventurer() {
   const cls = classes[Math.floor(Math.random() * classes.length)];
 
   const adventurer = {
-    name: "Adventurer " + (guild.length + 1),
+    name: "Adventurer " + (activeGuild.length + injuredGuild.length + 1),
     class: cls,
     level: 1,
     hp: 10,
@@ -51,7 +62,7 @@ function recruitAdventurer() {
     xp: 0
   };
 
-  guild.push(adventurer);
+  activeGuild.push(adventurer);
   log(`Recruited a ${cls}.`);
   updateUI();
 }
@@ -77,8 +88,8 @@ function getRandomResources() {
 }
 
 function sendOnQuest() {
-  if (guild.length === 0) {
-    log("You have no adventurers.");
+  if (activeGuild.length === 0) {
+    log("You have no active adventurers.");
     return;
   }
 
@@ -89,6 +100,12 @@ function sendOnQuest() {
     gold: Math.floor(Math.random() * 10) + 5,
     resources: getRandomResources()
   };
+
+  // Deduct HP from active adventurers
+  const hpDeduction = success ? 2 : 5;
+  activeGuild.forEach(a => {
+    a.hp -= hpDeduction;
+  });
 
   if (success) {
     player.gold += reward.gold;
@@ -101,7 +118,7 @@ function sendOnQuest() {
       log(`Obtained ${resources[res]} ${res}.`);
     });
 
-    guild.forEach(a => {
+    activeGuild.forEach(a => {
       a.xp += 5;
       if (a.xp >= 10) {
         a.level++;
@@ -117,17 +134,30 @@ function sendOnQuest() {
     log("The quest failed. The party retreats.");
   }
 
+  // Check for injuries
+  for (let i = activeGuild.length - 1; i >= 0; i--) {
+    if (activeGuild[i].hp <= 0) {
+      const injured = activeGuild.splice(i, 1)[0];
+      injuredGuild.push(injured);
+      log(`${injured.name} was injured and moved to recovery.`);
+    }
+  }
+
   updateUI();
 }
 
 function checkRecruitStatus() {
-  if (guild.length === 0) {
+  if (activeGuild.length === 0 && injuredGuild.length === 0) {
     log("You have no adventurers in your guild.");
     return;
   }
 
-  log("--- Recruit Status Report ---");
-  guild.forEach((a, i) => {
+  log("--- Active Recruit Status Report ---");
+  activeGuild.forEach((a, i) => {
+    log(`${i + 1}. ${a.name} (${a.class}) | Level: ${a.level} | HP: ${a.hp} | ATK: ${a.atk} | XP: ${a.xp}/10`);
+  });
+  log("--- Injured Recruit Status Report ---");
+  injuredGuild.forEach((a, i) => {
     log(`${i + 1}. ${a.name} (${a.class}) | Level: ${a.level} | HP: ${a.hp} | ATK: ${a.atk} | XP: ${a.xp}/10`);
   });
   log("--- End Report ---");
@@ -137,7 +167,8 @@ function checkInventory() {
   log("--- Tavern Inventory ---");
   log(`Gold: ${player.gold}`);
   log(`Reputation: ${player.reputation}`);
-  log(`Adventurers: ${guild.length}`);
+  log(`Active Adventurers: ${activeGuild.length}`);
+  log(`Injured Adventurers: ${injuredGuild.length}`);
   log(`Wood: ${player.wood}`);
   log(`Stone: ${player.stone}`);
   log(`Iron: ${player.iron}`);
@@ -157,7 +188,8 @@ function saveGame() {
    try {
        let data = {
            player,
-           guild
+           activeGuild,
+           injuredGuild
        };
        localStorage.setItem("myGameSave", JSON.stringify(data));
        log("Game data saved to localStorage.");
@@ -178,13 +210,14 @@ function loadGame() {
            return;
        }
        let data = JSON.parse(dataStr);
-       if (!data.player || !data.guild) {
+       if (!data.player || !data.activeGuild || !data.injuredGuild) {
            log("Saved game data is missing expected structures.");
            return;
        }
        // Assign loaded data
        player = data.player;
-       guild = data.guild;
+       activeGuild = data.activeGuild;
+       injuredGuild = data.injuredGuild;
        
        // Ensure backward compatibility for new resources
        player.wood = player.wood || 0;
@@ -204,6 +237,15 @@ loadGame();
 
 // Optional: auto-save every 10 seconds
 function autoSaveInterval() {
+   // Recover injured adventurers
+   for (let i = injuredGuild.length - 1; i >= 0; i--) {
+     injuredGuild[i].hp += 5;
+     if (injuredGuild[i].hp >= 10) {
+       const recovered = injuredGuild.splice(i, 1)[0];
+       activeGuild.push(recovered);
+       log(`${recovered.name} has recovered and returned to active duty.`);
+     }
+   }
    saveGame();
    setTimeout(autoSaveInterval, 10000);
 }
